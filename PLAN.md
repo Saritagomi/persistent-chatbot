@@ -19,7 +19,7 @@ Hard goals: **zero runtime dependencies**, **client JS ≤ 12 KB gzip**, tree-sh
 | 1. Walking skeleton | done |
 | 2. Tracks A/B/C (core, server, markdown + UI) | done |
 | 3. Harden: e2e, a11y, perf, examples | done: 11 Playwright tests, axe clean, 500 msgs render ~57 ms, streaming 60 fps, Next.js/Vite/Express examples build from tarball |
-| 4. Launch | pending: npm package name/scope, publish 0.1.0, demo, posts |
+| 4. Launch | 0.1.0 published 2026-10-07 as `@gomisarita/persistent-chatbot`; pending: demo, posts |
 
 Measured client size (min + brotli): core 1.9 KB, react + core + markdown 5.4 KB, css 2.1 KB = 7.5 KB total.
 

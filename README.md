@@ -1,5 +1,7 @@
 # @gomisarita/persistent-chatbot
 
+[![npm](https://img.shields.io/npm/v/@gomisarita/persistent-chatbot)](https://www.npmjs.com/package/@gomisarita/persistent-chatbot) [![bundle size](https://img.shields.io/bundlephobia/minzip/@gomisarita/persistent-chatbot)](https://bundlephobia.com/package/@gomisarita/persistent-chatbot) [![license](https://img.shields.io/npm/l/@gomisarita/persistent-chatbot)](./LICENSE)
+
 Drop-in AI chat widget for React that:
 
 - **Survives page refresh.** History is restored from storage, even if you refresh mid-answer.
