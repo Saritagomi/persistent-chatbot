@@ -347,7 +347,7 @@ npm run e2e        # playwright against packed tarball
 npx changeset      # note change for release
 ```
 
-Local git only, no GitHub. Branch per change -> commit (pre-commit hook: lint + typecheck) -> merge to `main` -> push/release (pre-push hook: full `release:check`) -> `npx changeset version` -> `npm publish --access public` (2FA) -> `git tag`.
+Repo: https://github.com/Saritagomi/persistent-chatbot. Branch per change -> commit (pre-commit hook: lint + typecheck) -> merge to `main` -> push/release (pre-push hook: full `release:check`) -> `npx changeset version` -> `npm publish --access public` (2FA) -> `git tag`.
 
 ### 6.5 Quality gates (local git hooks + `npm run release:check`)
 

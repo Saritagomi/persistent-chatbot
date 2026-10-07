@@ -4,6 +4,14 @@
   "description": "Drop-in AI chat widget: survives page refresh, streams tokens, renders markdown, keeps API keys on the server. Zero dependencies.",
   "license": "MIT",
   "author": "Sarita Gomi",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Saritagomi/persistent-chatbot.git"
+  },
+  "homepage": "https://github.com/Saritagomi/persistent-chatbot#readme",
+  "bugs": {
+    "url": "https://github.com/Saritagomi/persistent-chatbot/issues"
+  },
   "keywords": [
     "chatbot",
     "ai",
