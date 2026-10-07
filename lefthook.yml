@@ -1,0 +1,14 @@
+# Local replacement for CI: fast checks on commit, full checks on push/release.
+pre-commit:
+  parallel: true
+  commands:
+    lint:
+      glob: "*.{ts,tsx,js,json,css}"
+      run: npx biome check --no-errors-on-unmatched {staged_files}
+    typecheck:
+      glob: "*.{ts,tsx}"
+      run: npx tsc --noEmit
+pre-push:
+  commands:
+    full:
+      run: npm run release:check

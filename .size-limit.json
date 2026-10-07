@@ -1,0 +1,10 @@
+[
+  { "name": "core", "path": "dist/core/index.js", "limit": "3 KB" },
+  {
+    "name": "react (incl. core + markdown)",
+    "path": "dist/react/index.js",
+    "ignore": ["react", "react-dom"],
+    "limit": "11 KB"
+  },
+  { "name": "styles.css", "path": "dist/styles.css", "rolldown": false, "limit": "2 KB" }
+]
