@@ -20,10 +20,37 @@ export interface ChatbotProps extends ChatOptions {
   /** Floating mode only. Default false. */
   defaultOpen?: boolean
   theme?: { primary?: string; radius?: string; font?: string }
+  /**
+   * Shows a palette button so users can pick an accent color and light/dark mode.
+   * `true` uses the built-in palette; pass your own `{ name, color }` list to customize.
+   * The choice is remembered per `storageKey`.
+   */
+  colorPicker?: boolean | ColorOption[]
+  /** Starting color scheme. `auto` follows the OS. Default `auto`. */
+  colorScheme?: ColorScheme
   className?: string
   /** Replace the built-in markdown renderer. */
   renderMarkdown?: (text: string) => ReactNode
 }
+
+export type ColorScheme = 'light' | 'dark' | 'auto'
+export interface ColorOption {
+  name: string
+  color: string
+}
+
+/** Built-in accents. All keep white text readable (WCAG AA). */
+export const PALETTE: ColorOption[] = [
+  { name: 'Violet', color: '#6d28d9' },
+  { name: 'Indigo', color: '#4338ca' },
+  { name: 'Blue', color: '#1d4ed8' },
+  { name: 'Teal', color: '#0f766e' },
+  { name: 'Emerald', color: '#047857' },
+  { name: 'Amber', color: '#b45309' },
+  { name: 'Rose', color: '#be123c' },
+  { name: 'Slate', color: '#334155' },
+]
+const SCHEMES: ColorScheme[] = ['light', 'dark', 'auto']
 
 const NOTE: Partial<Record<Message['status'], string>> = {
   interrupted: 'Interrupted',
@@ -54,6 +81,9 @@ export function Chatbot(props: ChatbotProps): ReactNode {
     theme,
     className,
     renderMarkdown = (text: string) => <Markdown text={text} />,
+    colorPicker = false,
+    colorScheme = 'auto',
+    storageKey = 'pc:chat',
   } = props
   const { messages, status, send, stop, retry, clear } = useChat(props)
   const [open, setOpen] = useState(mode === 'inline' || defaultOpen)
@@ -65,6 +95,30 @@ export function Chatbot(props: ChatbotProps): ReactNode {
   const busy = status === 'streaming'
   const floating = mode === 'floating'
   const last = messages[messages.length - 1]
+  const palette = colorPicker === true ? PALETTE : colorPicker || []
+  const [accent, setAccent] = useState<string>()
+  const [scheme, setScheme] = useState(colorScheme)
+  const [picker, setPicker] = useState(false)
+  const prefKey = `${storageKey}:theme`
+
+  // Saved look is read after mount (SSR safe).
+  useEffect(() => {
+    if (!palette.length) return
+    try {
+      const saved = JSON.parse(localStorage.getItem(prefKey) ?? '{}')
+      if (saved.c) setAccent(saved.c)
+      if (SCHEMES.includes(saved.s)) setScheme(saved.s)
+    } catch {}
+  }, [prefKey, palette.length])
+
+  const choose = (c = accent, sc = scheme) => {
+    setAccent(c)
+    setScheme(sc)
+    try {
+      localStorage.setItem(prefKey, JSON.stringify({ c, s: sc }))
+    } catch {}
+  }
+
   const avatarEl = <span className="pc-avatar">{avatar}</span>
 
   // Follow new text only when the user is already at the bottom.
@@ -85,13 +139,17 @@ export function Chatbot(props: ChatbotProps): ReactNode {
   }
 
   const style = {
-    '--pc-primary': theme?.primary,
+    '--pc-primary': accent ?? theme?.primary,
     '--pc-radius': theme?.radius,
     '--pc-font': theme?.font,
   } as CSSProperties
 
   return (
-    <div className={`pc pc-${mode}${className ? ` ${className}` : ''}`} style={style}>
+    <div
+      className={`pc pc-${mode}${className ? ` ${className}` : ''}`}
+      style={style}
+      data-theme={scheme === 'auto' ? undefined : scheme}
+    >
       {open && (
         <section
           className="pc-panel"
@@ -118,6 +176,18 @@ export function Chatbot(props: ChatbotProps): ReactNode {
               <strong id={id}>{title}</strong>
               {(busy || subtitle) && <small>{busy ? 'Typing…' : subtitle}</small>}
             </div>
+            {!!palette.length && (
+              <button
+                type="button"
+                className="pc-icon"
+                onClick={() => setPicker(!picker)}
+                aria-label="Appearance"
+                aria-expanded={picker}
+                title="Appearance"
+              >
+                <Icon d="M12 3a9 9 0 0 0 0 18c1 0 1.7-.8 1.7-1.7 0-.5-.2-.9-.5-1.2a1.7 1.7 0 0 1 1.3-2.8h2A4.5 4.5 0 0 0 21 10.8C21 6.5 17 3 12 3zm-5.5 9a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm3-4a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm3 4a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z" />
+              </button>
+            )}
             <button
               type="button"
               className="pc-icon"
@@ -133,6 +203,38 @@ export function Chatbot(props: ChatbotProps): ReactNode {
               </button>
             )}
           </header>
+          {picker && (
+            <div className="pc-picker">
+              <fieldset className="pc-swatches">
+                <legend>Accent color</legend>
+                {palette.map((o) => (
+                  <button
+                    key={o.color}
+                    type="button"
+                    className="pc-swatch"
+                    style={{ background: o.color }}
+                    aria-label={o.name}
+                    title={o.name}
+                    aria-pressed={(accent ?? theme?.primary ?? PALETTE[0]?.color) === o.color}
+                    onClick={() => choose(o.color)}
+                  />
+                ))}
+              </fieldset>
+              <fieldset className="pc-seg">
+                <legend>Theme</legend>
+                {SCHEMES.map((sc) => (
+                  <button
+                    key={sc}
+                    type="button"
+                    aria-pressed={scheme === sc}
+                    onClick={() => choose(accent, sc)}
+                  >
+                    {sc[0]?.toUpperCase() + sc.slice(1)}
+                  </button>
+                ))}
+              </fieldset>
+            </div>
+          )}
           <div
             className="pc-messages"
             ref={list}

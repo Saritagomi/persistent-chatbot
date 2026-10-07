@@ -28,6 +28,7 @@ createRoot(document.getElementById('root') as HTMLElement).render(
         storageKey="pc:inline"
         welcomeMessage="Hi! I'm a demo assistant. Ask me anything, or pick a suggestion below."
         suggestions={suggestions}
+        colorPicker
       />
     </div>
     <Chatbot
@@ -36,7 +37,8 @@ createRoot(document.getElementById('root') as HTMLElement).render(
       storageKey="pc:floating"
       welcomeMessage="Hey 👋 How can I help today?"
       suggestions={suggestions.slice(0, 2)}
-      theme={{ primary: '#0d9488' }}
+      theme={{ primary: '#0f766e' }}
+      colorPicker
     />
   </div>,
 )

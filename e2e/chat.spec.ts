@@ -189,3 +189,25 @@ test('perf: 500 stored messages render fast; streaming keeps frames flowing', as
   console.log(`worst frame while streaming: ${longFrames.toFixed(1)} ms`)
   expect(longFrames).toBeLessThan(100)
 })
+
+test('color picker: accent + dark mode persist after refresh, accessible', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce', colorScheme: 'light' })
+  await page.getByRole('button', { name: 'Appearance' }).click()
+  await page.getByRole('button', { name: 'Rose' }).click()
+  await page.getByRole('button', { name: 'Dark' }).click()
+  await expect(page.getByRole('button', { name: 'Rose' })).toHaveAttribute('aria-pressed', 'true')
+  const root = page.locator('.pc')
+  await expect(root).toHaveAttribute('data-theme', 'dark')
+  const axe = await new AxeBuilder({ page }).include('.pc').analyze()
+  expect(axe.violations.map((v) => `${v.id}: ${v.help}`)).toEqual([])
+
+  await page.reload()
+  await expect(root).toHaveAttribute('data-theme', 'dark')
+  expect(await root.evaluate((el) => el.style.getPropertyValue('--pc-primary'))).toBe('#be123c')
+  await send(page, 'hello')
+  await expect(page.locator('.pc-user')).toHaveCSS('background-color', 'rgb(190, 18, 60)')
+
+  await page.getByRole('button', { name: 'Appearance' }).click()
+  await page.getByRole('button', { name: 'Auto' }).click()
+  await expect(root).not.toHaveAttribute('data-theme', /./)
+})

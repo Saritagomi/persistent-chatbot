@@ -5,5 +5,5 @@ import { createRoot } from 'react-dom/client'
 
 const mode = new URLSearchParams(location.search).get('mode') === 'floating' ? 'floating' : 'inline'
 createRoot(document.getElementById('root') as HTMLElement).render(
-  <Chatbot mode={mode} title="E2E" welcomeMessage="Welcome" />,
+  <Chatbot mode={mode} title="E2E" welcomeMessage="Welcome" colorPicker />,
 )
