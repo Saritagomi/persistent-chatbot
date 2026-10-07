@@ -34,9 +34,15 @@ export type ErrorCode =
   | 'network_error'
   | 'aborted'
 
+/** What the client sends and the server/provider receives. */
+export interface ChatMessage {
+  role: Role
+  content: string
+}
+
 /** Body the client POSTs to the chat endpoint. */
 export interface ChatRequestBody {
-  messages: Array<{ role: Role; content: string }>
+  messages: ChatMessage[]
 }
 
 /**
@@ -61,3 +67,9 @@ export interface PersistedChat {
   updatedAt: number
   messages: Message[]
 }
+
+/**
+ * Turns a conversation into a stream of text deltas.
+ * Throw an error with a `code: ErrorCode` property to report a specific failure.
+ */
+export type Transport = (messages: ChatMessage[], signal: AbortSignal) => AsyncIterable<string>

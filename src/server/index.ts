@@ -1,1 +1,7 @@
-export type { ChatRequestBody, ErrorCode, StreamEvent } from '../core/types'
+export type { ChatMessage, ChatRequestBody, ErrorCode, StreamEvent } from '../core/types'
+export { createChatHandler } from './handler'
+export { toNodeHandler } from './node'
+export { anthropic } from './providers/anthropic'
+export { openai } from './providers/openai'
+export type { ChatHandlerOptions, Provider, ProviderRequest } from './types'
+export { UpstreamError } from './upstream'
