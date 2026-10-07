@@ -1,6 +1,6 @@
 {
-  "name": "@saritagomi/persistent-chatbot",
-  "version": "0.0.0",
+  "name": "@gomisarita/persistent-chatbot",
+  "version": "0.1.0",
   "description": "Drop-in AI chat widget: survives page refresh, streams tokens, renders markdown, keeps API keys on the server. Zero dependencies.",
   "license": "MIT",
   "author": "Sarita Gomi",

@@ -1,4 +1,4 @@
-import { createChatHandler } from '@saritagomi/persistent-chatbot/server'
+import { createChatHandler } from '@gomisarita/persistent-chatbot/server'
 
 // The API key lives only here, on the server.
 export const POST = createChatHandler({

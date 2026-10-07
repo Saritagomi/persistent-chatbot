@@ -1,4 +1,4 @@
-# @saritagomi/persistent-chatbot
+# @gomisarita/persistent-chatbot
 
 Drop-in AI chat widget for React that:
 
@@ -12,7 +12,7 @@ Zero runtime dependencies. About 8 KB gzip for the client (core + markdown + Rea
 ## Install
 
 ```sh
-npm i @saritagomi/persistent-chatbot
+npm i @gomisarita/persistent-chatbot
 ```
 
 ## 30-second quickstart (Next.js App Router)
@@ -20,7 +20,7 @@ npm i @saritagomi/persistent-chatbot
 **1. Server route** (`app/api/chat/route.ts`). The key stays here:
 
 ```ts
-import { createChatHandler } from '@saritagomi/persistent-chatbot/server'
+import { createChatHandler } from '@gomisarita/persistent-chatbot/server'
 
 export const POST = createChatHandler({
   provider: 'anthropic', // or 'openai', or your own function
@@ -34,8 +34,8 @@ export const POST = createChatHandler({
 
 ```tsx
 'use client'
-import { Chatbot } from '@saritagomi/persistent-chatbot/react'
-import '@saritagomi/persistent-chatbot/styles.css'
+import { Chatbot } from '@gomisarita/persistent-chatbot/react'
+import '@gomisarita/persistent-chatbot/styles.css'
 
 export default function Support() {
   return <Chatbot endpoint="/api/chat" title="Support" welcomeMessage="Hi! How can I help?" />
@@ -69,14 +69,14 @@ The widget is styled with CSS variables (`--pc-primary`, `--pc-radius`, `--pc-fo
 ## Headless: build your own UI
 
 ```tsx
-import { useChat, Markdown } from '@saritagomi/persistent-chatbot/react'
+import { useChat, Markdown } from '@gomisarita/persistent-chatbot/react'
 
 const { messages, status, hydrated, send, stop, retry, clear } = useChat({ endpoint: '/api/chat' })
 ```
 
 Each message has the shape `{ id, role, content, status, error? }`. The `status` field is one of `streaming | complete | interrupted | stopped | error`.
 
-Without React, use `createChat(options)` from `@saritagomi/persistent-chatbot`. It returns `getState`, `subscribe`, `connect`, `send`, `stop`, `retry`, and `clear`.
+Without React, use `createChat(options)` from `@gomisarita/persistent-chatbot`. It returns `getState`, `subscribe`, `connect`, `send`, `stop`, `retry`, and `clear`.
 
 ## Server: `createChatHandler(options)`
 
@@ -101,7 +101,7 @@ createChatHandler({
 
 ```js
 import express from 'express'
-import { createChatHandler, toNodeHandler } from '@saritagomi/persistent-chatbot/server'
+import { createChatHandler, toNodeHandler } from '@gomisarita/persistent-chatbot/server'
 
 const app = express()
 app.post('/api/chat', toNodeHandler(createChatHandler({ provider: 'openai', apiKey: process.env.OPENAI_API_KEY, model: 'gpt-4.1-mini' })))

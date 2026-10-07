@@ -13,7 +13,7 @@ for ex in express vite-react nextjs; do
   cp -R "$root/examples/$ex" "$tmp/$ex"
   cd "$tmp/$ex"
   # Swap the registry version for the local tarball before installing.
-  node -e 'const f="package.json",p=require("./"+f);p.dependencies["@saritagomi/persistent-chatbot"]=process.argv[1];require("fs").writeFileSync(f,JSON.stringify(p))' "$tarball"
+  node -e 'const f="package.json",p=require("./"+f);p.dependencies["@gomisarita/persistent-chatbot"]=process.argv[1];require("fs").writeFileSync(f,JSON.stringify(p))' "$tarball"
   npm install --no-audit --no-fund --loglevel=error >/dev/null
   case $ex in
     express)

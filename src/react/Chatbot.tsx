@@ -31,7 +31,7 @@ const Icon = ({ d }: { d: string }) => (
   </svg>
 )
 
-/** Drop-in chat widget. Pair with `@saritagomi/persistent-chatbot/styles.css`. */
+/** Drop-in chat widget. Pair with `@gomisarita/persistent-chatbot/styles.css`. */
 export function Chatbot(props: ChatbotProps): ReactNode {
   const {
     title = 'Chat',

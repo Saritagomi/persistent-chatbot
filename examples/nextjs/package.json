@@ -7,7 +7,7 @@
     "start": "next start"
   },
   "dependencies": {
-    "@saritagomi/persistent-chatbot": "latest",
+    "@gomisarita/persistent-chatbot": "latest",
     "next": "latest",
     "react": "latest",
     "react-dom": "latest"

@@ -56,8 +56,8 @@ const config: UserConfig = {
   plugins: [react(), api()],
   resolve: {
     alias: [
-      { find: '@saritagomi/persistent-chatbot/react', replacement: `${dist}react/index.js` },
-      { find: '@saritagomi/persistent-chatbot/styles.css', replacement: `${dist}styles.css` },
+      { find: '@gomisarita/persistent-chatbot/react', replacement: `${dist}react/index.js` },
+      { find: '@gomisarita/persistent-chatbot/styles.css', replacement: `${dist}styles.css` },
     ],
   },
   server: { port: 5180, strictPort: true },

@@ -1,5 +1,5 @@
 // Server component: <Chatbot> ships with "use client", so it works here directly.
-import { Chatbot } from '@saritagomi/persistent-chatbot/react'
+import { Chatbot } from '@gomisarita/persistent-chatbot/react'
 
 export default function Page() {
   return (

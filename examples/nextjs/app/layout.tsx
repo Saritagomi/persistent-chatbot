@@ -1,4 +1,4 @@
-import '@saritagomi/persistent-chatbot/styles.css'
+import '@gomisarita/persistent-chatbot/styles.css'
 import type { ReactNode } from 'react'
 
 export default function RootLayout({ children }: { children: ReactNode }) {

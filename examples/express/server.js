@@ -1,4 +1,4 @@
-import { createChatHandler, toNodeHandler } from '@saritagomi/persistent-chatbot/server'
+import { createChatHandler, toNodeHandler } from '@gomisarita/persistent-chatbot/server'
 import express from 'express'
 
 // Uses OpenAI when OPENAI_API_KEY is set, else a demo provider (no key needed).

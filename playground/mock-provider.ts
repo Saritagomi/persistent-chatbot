@@ -12,7 +12,7 @@ This answer comes from the *mock provider* — no API key needed.
 3. Refresh the page: chat is restored
 
 \`\`\`ts
-import { Chatbot } from '@saritagomi/persistent-chatbot/react'
+import { Chatbot } from '@gomisarita/persistent-chatbot/react'
 
 export default () => <Chatbot endpoint="/api/chat" />
 \`\`\`

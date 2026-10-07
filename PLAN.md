@@ -1,4 +1,4 @@
-# @saritagomi/persistent-chatbot — Build Plan
+# @gomisarita/persistent-chatbot — Build Plan
 
 Drop-in AI chat widget that solves 4 problems together, in a tiny bundle:
 
@@ -30,10 +30,10 @@ Open items: real recorded provider fixtures (needs API key once), StackBlitz dem
 ## 1. Architecture — 3 layers, 1 package, subpath exports
 
 ```
-@saritagomi/persistent-chatbot           -> core (framework-agnostic, headless)
-@saritagomi/persistent-chatbot/react     -> <Chatbot/> component + useChat() hook
-@saritagomi/persistent-chatbot/server    -> createChatHandler() (Node / Edge / Bun / Deno)
-@saritagomi/persistent-chatbot/styles.css-> optional default theme (CSS variables)
+@gomisarita/persistent-chatbot           -> core (framework-agnostic, headless)
+@gomisarita/persistent-chatbot/react     -> <Chatbot/> component + useChat() hook
+@gomisarita/persistent-chatbot/server    -> createChatHandler() (Node / Edge / Bun / Deno)
+@gomisarita/persistent-chatbot/styles.css-> optional default theme (CSS variables)
 ```
 
 Why one package with subpaths (not many packages): one install, one version, but user only ships what they import. Server code never lands in the browser bundle.
@@ -157,7 +157,7 @@ Server:
 
 ```ts
 // app/api/chat/route.ts (Next.js) — same handler works in Hono, Bun, Deno, Cloudflare
-import { createChatHandler } from '@saritagomi/persistent-chatbot/server'
+import { createChatHandler } from '@gomisarita/persistent-chatbot/server'
 
 export const POST = createChatHandler({
   provider: 'anthropic',                 // 'openai' | 'anthropic' | custom fn
@@ -186,8 +186,8 @@ export const POST = createChatHandler({
 ## 4. Public API (draft)
 
 ```tsx
-import { Chatbot } from '@saritagomi/persistent-chatbot/react'
-import '@saritagomi/persistent-chatbot/styles.css'
+import { Chatbot } from '@gomisarita/persistent-chatbot/react'
+import '@gomisarita/persistent-chatbot/styles.css'
 
 <Chatbot
   endpoint="/api/chat"
@@ -252,7 +252,7 @@ persistent-chatbot/
 
 ```json
 {
-  "name": "@saritagomi/persistent-chatbot",
+  "name": "@gomisarita/persistent-chatbot",
   "type": "module",
   "sideEffects": ["*.css"],
   "exports": {
@@ -406,4 +406,4 @@ Verify competitor feature/size claims (bundlephobia, their docs) before putting 
 | Provider API formats change | Providers isolated in one file each; custom provider function supported |
 | localStorage holds sensitive chats | `persist={false}`, sessionStorage option, per-user keys, clear on logout doc |
 | Bundle creep | size-limit gate on every PR |
-| Package name taken / scope | Check `npm view @saritagomi/persistent-chatbot`, create npm user/org `saritagomi` first |
+| Package name taken / scope | Check `npm view @gomisarita/persistent-chatbot`, npm user is `gomisarita`, scope `@gomisarita` |

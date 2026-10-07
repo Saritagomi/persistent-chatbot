@@ -1,5 +1,5 @@
-import { Chatbot } from '@saritagomi/persistent-chatbot/react'
-import '@saritagomi/persistent-chatbot/styles.css'
+import { Chatbot } from '@gomisarita/persistent-chatbot/react'
+import '@gomisarita/persistent-chatbot/styles.css'
 import { createRoot } from 'react-dom/client'
 
 createRoot(document.getElementById('root')).render(
