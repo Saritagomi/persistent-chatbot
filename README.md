@@ -68,8 +68,8 @@ That's all you need. Refresh the page and the chat is still there.
 | `title`, `subtitle`, `placeholder`, `welcomeMessage` | | Text. The subtitle shows "Typing…" while an answer is streaming. |
 | `suggestions` | | Starter prompts shown as chips while the chat is empty |
 | `avatar` | sparkle icon | Assistant avatar (any `ReactNode`) |
-| `theme` | | `{ primary, radius, font }` |
-| `colorPicker` | `false` | `true` adds a palette button: 8 accent colors plus a Light/Dark/Auto switch, remembered per `storageKey`. Pass `[{ name, color }]` for your own palette. |
+| `theme` | Iris gradient | `{ primary, primaryTo, radius, font }`. Setting `primaryTo` makes the accent a gradient. |
+| `colorPicker` | `false` | `true` adds a palette button with 8 gradient themes (Iris, Ocean, Aurora, Sunset, Berry, Flamingo, Midnight, Graphite) and a Light/Dark/Auto switch. The choice is remembered per `storageKey`. Pass `[{ name, color, to? }]` for your own palette (`to` makes it a gradient). |
 | `colorScheme` | `auto` | Starting scheme: `light`, `dark`, or `auto` (follows the OS) |
 | `headers` | | Extra request headers (CSRF, etc.). Never put API keys here. |
 | `transport` | fetch | `(messages, signal) => AsyncIterable<string>` for a custom backend |

@@ -37,7 +37,7 @@ createRoot(document.getElementById('root') as HTMLElement).render(
       storageKey="pc:floating"
       welcomeMessage="Hey 👋 How can I help today?"
       suggestions={suggestions.slice(0, 2)}
-      theme={{ primary: '#0f766e' }}
+      theme={{ primary: '#c2410c', primaryTo: '#db2777' }}
       colorPicker
     />
   </div>,

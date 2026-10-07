@@ -19,9 +19,10 @@ export interface ChatbotProps extends ChatOptions {
   mode?: 'floating' | 'inline'
   /** Floating mode only. Default false. */
   defaultOpen?: boolean
-  theme?: { primary?: string; radius?: string; font?: string }
+  /** `primaryTo` makes the accent a gradient from `primary` to `primaryTo`. */
+  theme?: { primary?: string; primaryTo?: string; radius?: string; font?: string }
   /**
-   * Shows a palette button so users can pick an accent color and light/dark mode.
+   * Shows a palette button so users can pick an accent (solid or gradient) and light/dark mode.
    * `true` uses the built-in palette; pass your own `{ name, color }` list to customize.
    * The choice is remembered per `storageKey`.
    */
@@ -37,19 +38,23 @@ export type ColorScheme = 'light' | 'dark' | 'auto'
 export interface ColorOption {
   name: string
   color: string
+  /** Second color: makes this option a gradient from `color` to `to`. */
+  to?: string
 }
 
-/** Built-in accents. All keep white text readable (WCAG AA). */
+/** Built-in gradient accents. Every stop keeps white text readable (WCAG AA). */
 export const PALETTE: ColorOption[] = [
-  { name: 'Violet', color: '#6d28d9' },
-  { name: 'Indigo', color: '#4338ca' },
-  { name: 'Blue', color: '#1d4ed8' },
-  { name: 'Teal', color: '#0f766e' },
-  { name: 'Emerald', color: '#047857' },
-  { name: 'Amber', color: '#b45309' },
-  { name: 'Rose', color: '#be123c' },
-  { name: 'Slate', color: '#334155' },
+  { name: 'Iris', color: '#4f46e5', to: '#9333ea' },
+  { name: 'Ocean', color: '#1d4ed8', to: '#0e7490' },
+  { name: 'Aurora', color: '#047857', to: '#1d4ed8' },
+  { name: 'Sunset', color: '#c2410c', to: '#db2777' },
+  { name: 'Berry', color: '#be185d', to: '#7e22ce' },
+  { name: 'Flamingo', color: '#db2777', to: '#e11d48' },
+  { name: 'Midnight', color: '#0f172a', to: '#4338ca' },
+  { name: 'Graphite', color: '#18181b', to: '#52525b' },
 ]
+const gradient = (a?: string, b?: string) =>
+  a && b ? `linear-gradient(135deg, ${a}, ${b})` : undefined
 const SCHEMES: ColorScheme[] = ['light', 'dark', 'auto']
 
 const NOTE: Partial<Record<Message['status'], string>> = {
@@ -96,7 +101,7 @@ export function Chatbot(props: ChatbotProps): ReactNode {
   const floating = mode === 'floating'
   const last = messages[messages.length - 1]
   const palette = colorPicker === true ? PALETTE : colorPicker || []
-  const [accent, setAccent] = useState<string>()
+  const [accent, setAccent] = useState<ColorOption>()
   const [scheme, setScheme] = useState(colorScheme)
   const [picker, setPicker] = useState(false)
   const prefKey = `${storageKey}:theme`
@@ -106,7 +111,9 @@ export function Chatbot(props: ChatbotProps): ReactNode {
     if (!palette.length) return
     try {
       const saved = JSON.parse(localStorage.getItem(prefKey) ?? '{}')
-      if (saved.c) setAccent(saved.c)
+      // Older versions stored a plain color string.
+      const c = typeof saved.c === 'string' ? { name: '', color: saved.c } : saved.c
+      if (typeof c?.color === 'string') setAccent(c)
       if (SCHEMES.includes(saved.s)) setScheme(saved.s)
     } catch {}
   }, [prefKey, palette.length])
@@ -139,7 +146,10 @@ export function Chatbot(props: ChatbotProps): ReactNode {
   }
 
   const style = {
-    '--pc-primary': accent ?? theme?.primary,
+    '--pc-primary': accent?.color ?? theme?.primary,
+    '--pc-gradient': accent
+      ? (gradient(accent.color, accent.to) ?? accent.color)
+      : theme?.primary && (gradient(theme.primary, theme.primaryTo) ?? theme.primary),
     '--pc-radius': theme?.radius,
     '--pc-font': theme?.font,
   } as CSSProperties
@@ -212,11 +222,13 @@ export function Chatbot(props: ChatbotProps): ReactNode {
                     key={o.color}
                     type="button"
                     className="pc-swatch"
-                    style={{ background: o.color }}
+                    style={{ background: gradient(o.color, o.to) ?? o.color }}
                     aria-label={o.name}
                     title={o.name}
-                    aria-pressed={(accent ?? theme?.primary ?? PALETTE[0]?.color) === o.color}
-                    onClick={() => choose(o.color)}
+                    aria-pressed={
+                      (accent?.color ?? theme?.primary ?? palette[0]?.color) === o.color
+                    }
+                    onClick={() => choose(o)}
                   />
                 ))}
               </fieldset>

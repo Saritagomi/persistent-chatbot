@@ -193,9 +193,9 @@ test('perf: 500 stored messages render fast; streaming keeps frames flowing', as
 test('color picker: accent + dark mode persist after refresh, accessible', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce', colorScheme: 'light' })
   await page.getByRole('button', { name: 'Appearance' }).click()
-  await page.getByRole('button', { name: 'Rose' }).click()
+  await page.getByRole('button', { name: 'Sunset' }).click()
   await page.getByRole('button', { name: 'Dark' }).click()
-  await expect(page.getByRole('button', { name: 'Rose' })).toHaveAttribute('aria-pressed', 'true')
+  await expect(page.getByRole('button', { name: 'Sunset' })).toHaveAttribute('aria-pressed', 'true')
   const root = page.locator('.pc')
   await expect(root).toHaveAttribute('data-theme', 'dark')
   const axe = await new AxeBuilder({ page }).include('.pc').analyze()
@@ -203,9 +203,12 @@ test('color picker: accent + dark mode persist after refresh, accessible', async
 
   await page.reload()
   await expect(root).toHaveAttribute('data-theme', 'dark')
-  expect(await root.evaluate((el) => el.style.getPropertyValue('--pc-primary'))).toBe('#be123c')
+  expect(await root.evaluate((el) => el.style.getPropertyValue('--pc-primary'))).toBe('#c2410c')
   await send(page, 'hello')
-  await expect(page.locator('.pc-user')).toHaveCSS('background-color', 'rgb(190, 18, 60)')
+  await expect(page.locator('.pc-user')).toHaveCSS(
+    'background-image',
+    'linear-gradient(135deg, rgb(194, 65, 12), rgb(219, 39, 119))',
+  )
 
   await page.getByRole('button', { name: 'Appearance' }).click()
   await page.getByRole('button', { name: 'Auto' }).click()
