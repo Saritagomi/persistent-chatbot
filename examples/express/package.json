@@ -1,0 +1,12 @@
+{
+  "name": "example-express",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "@saritagomi/persistent-chatbot": "latest",
+    "express": "latest"
+  }
+}

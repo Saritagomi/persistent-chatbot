@@ -20,7 +20,7 @@ export default defineConfig([
     target: 'es2020',
     dts: true,
     minify: true,
-    external: ['react', 'react-dom', 'react/jsx-runtime'],
+    deps: { neverBundle: ['react', 'react-dom', 'react/jsx-runtime'] },
     // Next.js App Router needs this on client components.
     banner: { js: '"use client";' },
     copy: [{ from: 'src/styles.css', to: 'dist' }],

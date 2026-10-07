@@ -80,10 +80,12 @@
     "test:watch": "vitest",
     "size": "size-limit",
     "check:package": "publint && attw --pack . --profile node16 --exclude-entrypoints styles.css",
-    "release:check": "npm run lint && npm run typecheck && npm run test && npm run build && npm run size && npm run check:package",
-    "release": "npm run release:check && changeset publish",
+    "release:check": "npm run lint && npm run typecheck && npm run test && npm run build && npm run size && npm run check:package && npm run e2e",
+    "release": "npm run release:check && npm run examples:check && changeset publish",
     "prepare": "lefthook install",
-    "pack:check": "npm pack --dry-run"
+    "pack:check": "npm pack --dry-run",
+    "e2e": "playwright test",
+    "examples:check": "bash scripts/check-examples.sh"
   },
   "peerDependencies": {
     "react": ">=18",
@@ -100,8 +102,10 @@
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.18.5",
     "@arethetypeswrong/core": "^0.18.5",
+    "@axe-core/playwright": "^4.13.0",
     "@biomejs/biome": "^2.5.15",
     "@changesets/cli": "^3.0.3",
+    "@playwright/test": "^1.63.0",
     "@size-limit/preset-small-lib": "^14.1.0",
     "@types/node": "^22.20.5",
     "@types/react": "^19.3.0",

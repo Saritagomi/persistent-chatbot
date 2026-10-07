@@ -6,7 +6,8 @@
     "useIgnoreFile": true
   },
   "files": {
-    "ignoreUnknown": true
+    "ignoreUnknown": true,
+    "includes": ["**", "!examples/**/.next", "!test-results", "!playwright-report"]
   },
   "formatter": {
     "enabled": true,

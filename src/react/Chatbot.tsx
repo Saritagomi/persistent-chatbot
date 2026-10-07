@@ -84,7 +84,20 @@ export function Chatbot(props: ChatbotProps): ReactNode {
           className="pc-panel"
           role={floating ? 'dialog' : 'region'}
           aria-labelledby={id}
-          onKeyDown={(e) => floating && e.key === 'Escape' && close()}
+          onKeyDown={(e) => {
+            if (!floating) return
+            if (e.key === 'Escape') return close()
+            // Keep Tab focus inside the open floating panel.
+            if (e.key !== 'Tab') return
+            const items = e.currentTarget.querySelectorAll<HTMLElement>(
+              'button:not(:disabled),textarea,a[href]',
+            )
+            const edge = items[e.shiftKey ? 0 : items.length - 1]
+            if (document.activeElement === edge) {
+              e.preventDefault()
+              items[e.shiftKey ? items.length - 1 : 0]?.focus()
+            }
+          }}
         >
           <header className="pc-header">
             <span id={id}>{title}</span>

@@ -117,4 +117,41 @@ describe('createChat', () => {
     expect(spy).not.toHaveBeenCalled()
     spy.mockRestore()
   })
+
+  it('idle tab does not overwrite newer history on hide', async () => {
+    const storage = memoryStorage()
+    const a = createChat({ storage, transport: fakeTransport([]) })
+    const detachA = a.connect()
+    await tick()
+    const b = createChat({ storage, transport: fakeTransport(['b']) })
+    b.connect()
+    await b.send('from B')
+    detachA() // tab A closes with stale empty state
+    expect(String(storage.get('pc:chat'))).toContain('from B')
+  })
+
+  it('request killed by page unload is stored as interrupted, not error', async () => {
+    const storage = memoryStorage()
+    let kill = (_: Error) => {}
+    const chat = createChat({
+      storage,
+      transport: async function* () {
+        yield 'part'
+        await new Promise((_, reject) => {
+          kill = reject
+        })
+      },
+    })
+    chat.connect()
+    const sending = chat.send('Q')
+    await tick()
+    window.dispatchEvent(new Event('pagehide'))
+    kill(Object.assign(new Error('x'), { code: 'network_error' }))
+    await sending
+    const reloaded = createChat({ storage })
+    reloaded.connect()
+    await tick()
+    const last = reloaded.getState().messages[1]
+    expect([last?.content, last?.status]).toEqual(['part', 'interrupted'])
+  })
 })

@@ -71,8 +71,13 @@ export function createChat(options: ChatOptions = {}): Chat {
   let pending = ''
   let frame = false
   let timer: ReturnType<typeof setTimeout> | undefined
+  // Unsaved changes. Only dirty state is written, so an idle tab never overwrites newer history.
+  let dirty = false
+  // Set on pagehide: the browser kills the request, which must not be saved as an error.
+  let unloading = false
 
   const set = (patch: Partial<ChatState>) => {
+    if (patch.messages) dirty = true
     state = { ...state, ...patch }
     for (const l of listeners) l()
   }
@@ -85,7 +90,9 @@ export function createChat(options: ChatOptions = {}): Chat {
   const saveNow = () => {
     clearTimeout(timer)
     timer = undefined
-    if (state.hydrated) save(storage, key, state.messages, maxMessages)
+    if (!state.hydrated || !dirty) return
+    dirty = false
+    save(storage, key, state.messages, maxMessages)
   }
   // Throttled while streaming: at most one write per 500 ms.
   const saveSoon = () => {
@@ -129,7 +136,8 @@ export function createChat(options: ChatOptions = {}): Chat {
       patch = code === 'aborted' ? { status: 'stopped' } : { status: 'error', error: code }
       if (code !== 'aborted') onError?.(code)
     }
-    if (controller !== ctrl) return // cleared or replaced meanwhile
+    // Cleared/replaced meanwhile, or page unloading (keep `streaming` in storage -> interrupted).
+    if (controller !== ctrl || unloading) return
     flush()
     controller = undefined
     patchLast(patch)
@@ -147,6 +155,7 @@ export function createChat(options: ChatOptions = {}): Chat {
 
   const reload = async () => {
     set({ messages: await load(storage, key, ttl), hydrated: true })
+    dirty = false
   }
   const hydrate = () => {
     hydration ??= reload()
@@ -156,6 +165,13 @@ export function createChat(options: ChatOptions = {}): Chat {
   const onHide = () => {
     flush()
     saveNow()
+  }
+  const onPageHide = () => {
+    onHide()
+    unloading = true
+  }
+  const onPageShow = () => {
+    unloading = false
   }
   const onVisibility = () => document.visibilityState === 'hidden' && onHide()
   // Cross-tab sync (localStorage fires `storage` in other tabs).
@@ -172,11 +188,13 @@ export function createChat(options: ChatOptions = {}): Chat {
     connect() {
       hydrate()
       if (typeof window === 'undefined') return () => {}
-      window.addEventListener('pagehide', onHide)
+      window.addEventListener('pagehide', onPageHide)
+      window.addEventListener('pageshow', onPageShow)
       window.addEventListener('storage', onStorage)
       document.addEventListener('visibilitychange', onVisibility)
       return () => {
-        window.removeEventListener('pagehide', onHide)
+        window.removeEventListener('pagehide', onPageHide)
+        window.removeEventListener('pageshow', onPageShow)
         window.removeEventListener('storage', onStorage)
         document.removeEventListener('visibilitychange', onVisibility)
         onHide()

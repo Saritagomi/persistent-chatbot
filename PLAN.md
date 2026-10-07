@@ -11,6 +11,20 @@ Drop-in AI chat widget that solves 4 problems together, in a tiny bundle:
 
 Hard goals: **zero runtime dependencies**, **client JS ≤ 12 KB gzip**, tree-shakable, SSR-safe, typed.
 
+## Status (2026-10-07)
+
+| Phase | State |
+|---|---|
+| 0. Contracts + setup | done |
+| 1. Walking skeleton | done |
+| 2. Tracks A/B/C (core, server, markdown + UI) | done |
+| 3. Harden: e2e, a11y, perf, examples | done: 11 Playwright tests, axe clean, 500 msgs render ~57 ms, streaming 60 fps, Next.js/Vite/Express examples build from tarball |
+| 4. Launch | pending: npm package name/scope, publish 0.1.0, demo, posts |
+
+Measured client size (min + brotli): core 1.9 KB, react + core + markdown 5.1 KB, css 1.2 KB.
+
+Open items: real recorded provider fixtures (needs API key once), StackBlitz demo, README GIF.
+
 ---
 
 ## 1. Architecture — 3 layers, 1 package, subpath exports

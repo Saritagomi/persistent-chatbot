@@ -16,5 +16,5 @@
     "skipLibCheck": true,
     "noEmit": true
   },
-  "include": ["src", "test", "playground"]
+  "include": ["src", "test", "playground", "e2e", "playwright.config.ts"]
 }
