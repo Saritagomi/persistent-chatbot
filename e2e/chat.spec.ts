@@ -125,12 +125,15 @@ test('floating: keyboard only, focus trap, Escape returns focus', async ({ page 
 })
 
 test('a11y: no axe violations (inline + floating, with content)', async ({ page }) => {
+  // Measure final colors, not mid fade-in animation.
+  await page.emulateMedia({ reducedMotion: 'reduce' })
   await send(page, 'hello')
   await expect(assistant(page)).toHaveClass(/pc-complete/)
   const inline = await new AxeBuilder({ page }).include('.pc').analyze()
   expect(inline.violations.map((v) => `${v.id}: ${v.help}`)).toEqual([])
   await page.goto('/?mode=floating')
   await page.getByRole('button', { name: 'Open chat' }).click()
+  await page.getByRole('button', { name: 'Close', exact: true }).waitFor()
   const floating = await new AxeBuilder({ page }).include('.pc').analyze()
   expect(floating.violations.map((v) => `${v.id}: ${v.help}`)).toEqual([])
 })

@@ -38,7 +38,14 @@ import { Chatbot } from '@gomisarita/persistent-chatbot/react'
 import '@gomisarita/persistent-chatbot/styles.css'
 
 export default function Support() {
-  return <Chatbot endpoint="/api/chat" title="Support" welcomeMessage="Hi! How can I help?" />
+  return (
+    <Chatbot
+      endpoint="/api/chat"
+      title="Support"
+      welcomeMessage="Hi! How can I help?"
+      suggestions={['Track my order', 'Talk to a human']}
+    />
+  )
 }
 ```
 
@@ -57,7 +64,9 @@ That's all you need. Refresh the page and the chat is still there.
 | `ttl` | — | Drop stored history older than this many ms |
 | `mode` | `floating` | `floating` bubble, or `inline` to fill its parent |
 | `defaultOpen` | `false` | Floating mode only |
-| `title`, `placeholder`, `welcomeMessage` | | Text |
+| `title`, `subtitle`, `placeholder`, `welcomeMessage` | | Text. The subtitle shows "Typing…" while an answer is streaming. |
+| `suggestions` | | Starter prompts shown as chips while the chat is empty |
+| `avatar` | sparkle icon | Assistant avatar (any `ReactNode`) |
 | `theme` | | `{ primary, radius, font }` |
 | `headers` | | Extra request headers (CSRF, etc.). Never put API keys here. |
 | `transport` | fetch | `(messages, signal) => AsyncIterable<string>` for a custom backend |
@@ -131,8 +140,9 @@ See [docs/protocol.md](./docs/protocol.md) for the event format the client and s
 ## Development
 
 ```sh
-npm run dev            # playground at localhost:5173 with mock AI (no key needed)
+npm run dev                         # playground with demo AI (no key needed)
 ANTHROPIC_API_KEY=... npm run dev   # playground with real Claude
+OPENAI_API_KEY=... npm run dev      # playground with real OpenAI
 npm test               # unit tests
 npm run release:check  # lint, types, tests, build, size, package checks
 ```

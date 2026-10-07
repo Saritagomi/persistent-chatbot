@@ -1,24 +1,26 @@
 .pc {
   --pc-primary: #6d28d9;
-  --pc-radius: 12px;
-  --pc-font: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --pc-radius: 20px;
+  --pc-font: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --pc-bg: #fff;
-  --pc-fg: #111827;
-  --pc-muted: #6b7280;
-  --pc-border: #e5e7eb;
-  --pc-bubble: #f3f4f6;
-  --pc-code-bg: #0f172a;
-  --pc-code-fg: #e2e8f0;
-  font: 14px / 1.5 var(--pc-font);
+  --pc-fg: #0f172a;
+  --pc-muted: #64748b;
+  --pc-border: #e2e8f0;
+  --pc-soft: #f1f5f9;
+  --pc-code-bg: #0b1020;
+  --pc-shadow: 0 1px 2px #0f172a0d, 0 12px 32px -8px #0f172a2e, 0 32px 64px -24px #0f172a33;
+  font: 14.5px / 1.6 var(--pc-font);
   color: var(--pc-fg);
+  -webkit-font-smoothing: antialiased;
 }
 @media (prefers-color-scheme: dark) {
   .pc {
-    --pc-bg: #111827;
-    --pc-fg: #f3f4f6;
-    --pc-muted: #9ca3af;
-    --pc-border: #374151;
-    --pc-bubble: #1f2937;
+    --pc-bg: #0f1115;
+    --pc-fg: #e6e8ee;
+    --pc-muted: #8b93a7;
+    --pc-border: #23262f;
+    --pc-soft: #1a1d24;
+    --pc-shadow: 0 0 0 1px #ffffff0f, 0 24px 64px -16px #000c;
   }
 }
 .pc *,
@@ -34,11 +36,20 @@
   cursor: pointer;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
+  transition:
+    background 0.15s,
+    transform 0.15s,
+    opacity 0.15s;
+}
+.pc button:focus-visible {
+  outline: 2px solid var(--pc-primary);
+  outline-offset: 2px;
 }
 .pc-floating {
   position: fixed;
-  right: 20px;
-  bottom: 20px;
+  right: 24px;
+  bottom: 24px;
   z-index: 2147483000;
 }
 .pc-inline {
@@ -56,49 +67,104 @@
 .pc-floating .pc-panel {
   position: absolute;
   right: 0;
-  bottom: 68px;
-  width: min(380px, calc(100vw - 40px));
-  height: min(600px, calc(100vh - 110px));
-  box-shadow: 0 12px 40px #0003;
+  bottom: 76px;
+  width: min(400px, calc(100vw - 32px));
+  height: min(640px, calc(100vh - 120px));
+  border: 0;
+  box-shadow: var(--pc-shadow);
+  transform-origin: bottom right;
+  animation: pc-pop 0.22s cubic-bezier(0.2, 0.9, 0.3, 1.2);
 }
 .pc .pc-launcher {
-  width: 56px;
-  height: 56px;
+  width: 60px;
+  height: 60px;
   border-radius: 50%;
-  justify-content: center;
-  background: var(--pc-primary);
   color: #fff;
-  box-shadow: 0 6px 20px #0003;
+  background: var(--pc-primary) linear-gradient(135deg, #fff3, #0000 60%);
+  box-shadow:
+    0 8px 24px -6px var(--pc-primary),
+    0 2px 6px #0003;
+}
+.pc .pc-launcher:hover {
+  transform: translateY(-2px) scale(1.04);
 }
 .pc-header {
   display: flex;
   align-items: center;
-  gap: 4px;
-  padding: 12px 12px 12px 16px;
-  background: var(--pc-primary);
-  color: #fff;
+  gap: 10px;
+  padding: 14px 12px 14px 16px;
+  border-bottom: 1px solid var(--pc-border);
+}
+.pc-title {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  line-height: 1.3;
+}
+.pc-title strong {
+  font-size: 15px;
   font-weight: 600;
 }
-.pc-header span {
-  flex: 1;
+.pc-title small {
+  font-size: 12px;
+  color: var(--pc-muted);
+}
+.pc .pc-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  color: var(--pc-muted);
+}
+.pc .pc-icon:hover {
+  background: var(--pc-soft);
+  color: var(--pc-fg);
+}
+.pc-avatar {
+  flex: none;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  color: #fff;
+  background: var(--pc-primary) linear-gradient(135deg, #fff4, #0000 70%);
+}
+.pc-header .pc-avatar {
+  width: 36px;
+  height: 36px;
 }
 .pc-messages {
   flex: 1;
   overflow-y: auto;
-  padding: 16px;
+  padding: 20px 16px;
   display: flex;
   flex-direction: column;
+  gap: 18px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--pc-border) transparent;
+}
+.pc-row {
+  display: flex;
   gap: 10px;
+  align-items: flex-start;
+  animation: pc-in 0.25s ease-out;
+}
+.pc-row-user {
+  justify-content: flex-end;
 }
 .pc-msg {
-  max-width: 85%;
-  padding: 8px 12px;
-  border-radius: var(--pc-radius);
-  background: var(--pc-bubble);
+  min-width: 0;
   overflow-wrap: anywhere;
 }
+.pc-assistant {
+  flex: 1;
+  padding-top: 3px;
+}
 .pc-user {
-  align-self: flex-end;
+  max-width: 80%;
+  padding: 9px 14px;
+  border-radius: 18px 18px 6px;
   background: var(--pc-primary);
   color: #fff;
   white-space: pre-wrap;
@@ -112,132 +178,216 @@
 .pc-msg p,
 .pc-msg ul,
 .pc-msg ol,
-.pc-msg pre,
 .pc-msg blockquote {
-  margin: 0 0 8px;
+  margin: 0 0 10px;
 }
 .pc-msg ul,
 .pc-msg ol {
-  padding-left: 20px;
+  padding-left: 22px;
+}
+.pc-msg li {
+  margin: 3px 0;
+}
+.pc-msg li::marker {
+  color: var(--pc-muted);
 }
 .pc-msg h1,
 .pc-msg h2,
-.pc-msg h3 {
-  font-size: 1.1em;
-  margin: 12px 0 6px;
+.pc-msg h3,
+.pc-msg h4 {
+  font-size: 1.05em;
+  font-weight: 650;
+  margin: 16px 0 6px;
 }
 .pc-msg a {
   color: var(--pc-primary);
+  text-underline-offset: 2px;
+}
+.pc-msg hr {
+  border: 0;
+  border-top: 1px solid var(--pc-border);
+  margin: 14px 0;
 }
 .pc-msg blockquote {
-  border-left: 3px solid var(--pc-border);
-  padding-left: 10px;
+  border-left: 3px solid var(--pc-primary);
+  padding: 2px 0 2px 12px;
   color: var(--pc-muted);
 }
 .pc-msg code {
   font:
-    0.9em ui-monospace,
+    0.88em ui-monospace,
+    SFMono-Regular,
     Menlo,
     Consolas,
     monospace;
-  background: #8882;
-  padding: 1px 4px;
-  border-radius: 4px;
+  background: var(--pc-soft);
+  border: 1px solid var(--pc-border);
+  padding: 1px 5px;
+  border-radius: 6px;
 }
 .pc-code {
-  margin: 0 0 8px;
-  border-radius: 8px;
+  margin: 0 0 10px;
+  border: 1px solid var(--pc-border);
+  border-radius: 12px;
   overflow: hidden;
   background: var(--pc-code-bg);
-  color: var(--pc-code-fg);
+  color: #e2e8f0;
 }
 .pc-code-bar {
   display: flex;
   justify-content: space-between;
-  padding: 4px 10px;
+  align-items: center;
+  padding: 6px 8px 6px 14px;
   font-size: 12px;
-  opacity: 0.75;
+  color: #94a3b8;
+  background: #ffffff0a;
+}
+.pc-code-bar button {
+  padding: 2px 8px;
+  border-radius: 6px;
+}
+.pc-code-bar button:hover {
+  background: #ffffff1a;
+  color: #fff;
 }
 .pc-code pre {
   margin: 0;
-  padding: 0 12px 12px;
+  padding: 12px 14px;
   overflow-x: auto;
+  line-height: 1.5;
 }
 .pc-code code {
   background: none;
+  border: 0;
   padding: 0;
+  color: inherit;
 }
 .pc-table {
   overflow-x: auto;
-  margin: 0 0 8px;
+  margin: 0 0 10px;
+  border: 1px solid var(--pc-border);
+  border-radius: 10px;
 }
 .pc-table table {
   border-collapse: collapse;
+  width: 100%;
+  font-size: 0.95em;
 }
 .pc-table th,
 .pc-table td {
-  border: 1px solid var(--pc-border);
-  padding: 4px 8px;
+  padding: 7px 12px;
+  border-bottom: 1px solid var(--pc-border);
+  text-align: left;
+}
+.pc-table th {
+  background: var(--pc-soft);
+  font-weight: 600;
+}
+.pc-table tr:last-child td {
+  border-bottom: 0;
 }
 .pc-note {
-  margin-top: 6px;
-  font-size: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+  font-size: 12.5px;
   color: var(--pc-muted);
 }
+.pc-error .pc-note {
+  color: #dc2626;
+}
 .pc-note button {
+  padding: 3px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--pc-border);
+  color: var(--pc-fg);
+}
+.pc-note button:hover {
+  background: var(--pc-soft);
+}
+.pc-suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding-left: 40px;
+}
+.pc-suggestions button {
+  padding: 7px 13px;
+  border-radius: 999px;
+  border: 1px solid var(--pc-border);
+  font-size: 13px;
+  text-align: left;
+}
+.pc-suggestions button:hover {
+  border-color: var(--pc-primary);
   color: var(--pc-primary);
-  text-decoration: underline;
 }
 .pc-typing {
   display: inline-flex;
   gap: 4px;
+  padding: 8px 0;
 }
 .pc-typing i {
-  width: 6px;
-  height: 6px;
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
   background: var(--pc-muted);
-  animation: pc-blink 1s infinite;
+  animation: pc-bounce 1.2s infinite;
 }
 .pc-typing i:nth-child(2) {
-  animation-delay: 0.2s;
+  animation-delay: 0.15s;
 }
 .pc-typing i:nth-child(3) {
-  animation-delay: 0.4s;
-}
-@keyframes pc-blink {
-  50% {
-    opacity: 0.2;
-  }
+  animation-delay: 0.3s;
 }
 .pc-composer {
   display: flex;
+  align-items: flex-end;
   gap: 8px;
-  padding: 10px;
-  border-top: 1px solid var(--pc-border);
+  margin: 0 12px 12px;
+  padding: 6px 6px 6px 14px;
+  border: 1px solid var(--pc-border);
+  border-radius: 18px;
+  background: var(--pc-soft);
+  transition:
+    border-color 0.15s,
+    box-shadow 0.15s;
+}
+.pc-composer:focus-within {
+  border-color: var(--pc-primary);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--pc-primary) 18%, transparent);
+  background: var(--pc-bg);
 }
 .pc-composer textarea {
   flex: 1;
+  align-self: center;
   resize: none;
-  max-height: 120px;
+  max-height: 140px;
   field-sizing: content;
-  padding: 8px 10px;
+  padding: 6px 0;
   font: inherit;
   color: inherit;
   background: transparent;
-  border: 1px solid var(--pc-border);
-  border-radius: 8px;
+  border: 0;
+  outline: 0;
 }
-.pc-composer textarea:focus {
-  outline: 2px solid var(--pc-primary);
-  outline-offset: -1px;
+.pc-composer textarea::placeholder {
+  color: var(--pc-muted);
 }
-.pc-composer button {
-  color: var(--pc-primary);
-  padding: 0 6px;
+.pc .pc-send {
+  flex: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  color: #fff;
+  background: var(--pc-primary);
 }
-.pc-composer button:disabled {
-  opacity: 0.4;
+.pc .pc-send:hover:not(:disabled) {
+  transform: scale(1.06);
+}
+.pc .pc-send:disabled {
+  opacity: 0.35;
   cursor: default;
 }
 .pc-sr {
@@ -247,8 +397,52 @@
   overflow: hidden;
   clip-path: inset(50%);
 }
+@keyframes pc-pop {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.96);
+  }
+}
+@keyframes pc-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+@keyframes pc-bounce {
+  0%,
+  60%,
+  100% {
+    transform: none;
+    opacity: 0.5;
+  }
+  30% {
+    transform: translateY(-4px);
+    opacity: 1;
+  }
+}
+@media (max-width: 480px) {
+  .pc-floating {
+    right: 16px;
+    bottom: 16px;
+  }
+  .pc-floating .pc-panel {
+    position: fixed;
+    inset: 0;
+    width: auto;
+    height: auto;
+    border-radius: 0;
+  }
+  /* Full-screen panel has its own close button. */
+  .pc-panel + .pc-launcher {
+    display: none;
+  }
+}
 @media (prefers-reduced-motion: reduce) {
-  .pc-typing i {
-    animation: none;
+  .pc * {
+    /* biome-ignore lint/complexity/noImportantStyles: reduced motion must win */
+    animation: none !important;
+    /* biome-ignore lint/complexity/noImportantStyles: reduced motion must win */
+    transition: none !important;
   }
 }

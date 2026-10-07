@@ -6,9 +6,15 @@ import { useChat } from './useChat'
 
 export interface ChatbotProps extends ChatOptions {
   title?: string
+  /** Small line under the title. Shows "Typing…" while answering. */
+  subtitle?: string
   placeholder?: string
   /** Shown when history is empty. Not stored. */
   welcomeMessage?: string
+  /** Starter prompts shown as chips when history is empty. */
+  suggestions?: string[]
+  /** Assistant avatar. Default: sparkle icon. */
+  avatar?: ReactNode
   /** `floating` bubble in the corner (default) or `inline` embed filling its parent. */
   mode?: 'floating' | 'inline'
   /** Floating mode only. Default false. */
@@ -20,23 +26,29 @@ export interface ChatbotProps extends ChatOptions {
 }
 
 const NOTE: Partial<Record<Message['status'], string>> = {
-  interrupted: 'Interrupted.',
-  stopped: 'Stopped.',
-  error: 'Something went wrong.',
+  interrupted: 'Interrupted',
+  stopped: 'Stopped',
+  error: 'Something went wrong',
 }
 
-const Icon = ({ d }: { d: string }) => (
-  <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+const Icon = ({ d, size = 20 }: { d: string; size?: number }) => (
+  <svg viewBox="0 0 24 24" width={size} height={size} aria-hidden="true">
     <path d={d} fill="currentColor" />
   </svg>
 )
 
+const SPARKLE =
+  'M12 2.5c.4 3.9 1.5 5.9 3.2 7.1 1.3.9 3.1 1.4 6.3 1.9v1c-3.2.5-5 1-6.3 1.9-1.7 1.2-2.8 3.2-3.2 7.1h-1c-.4-3.9-1.5-5.9-3.2-7.1-1.3-.9-3.1-1.4-6.3-1.9v-1c3.2-.5 5-1 6.3-1.9C9.5 8.4 10.6 6.4 11 2.5z'
+
 /** Drop-in chat widget. Pair with `@gomisarita/persistent-chatbot/styles.css`. */
 export function Chatbot(props: ChatbotProps): ReactNode {
   const {
-    title = 'Chat',
-    placeholder = 'Type a message…',
+    title = 'Assistant',
+    subtitle,
+    placeholder = 'Message…',
     welcomeMessage,
+    suggestions,
+    avatar = <Icon d={SPARKLE} size={16} />,
     mode = 'floating',
     defaultOpen = false,
     theme,
@@ -53,6 +65,7 @@ export function Chatbot(props: ChatbotProps): ReactNode {
   const busy = status === 'streaming'
   const floating = mode === 'floating'
   const last = messages[messages.length - 1]
+  const avatarEl = <span className="pc-avatar">{avatar}</span>
 
   // Follow new text only when the user is already at the bottom.
   useEffect(() => {
@@ -60,10 +73,10 @@ export function Chatbot(props: ChatbotProps): ReactNode {
     if (el && atBottom.current) el.scrollTop = el.scrollHeight
   })
 
-  const submit = () => {
-    if (busy || !input.trim()) return
+  const submit = (text = input) => {
+    if (busy || !text.trim()) return
     atBottom.current = true
-    send(input)
+    send(text)
     setInput('')
   }
   const close = () => {
@@ -100,13 +113,23 @@ export function Chatbot(props: ChatbotProps): ReactNode {
           }}
         >
           <header className="pc-header">
-            <span id={id}>{title}</span>
-            <button type="button" onClick={clear} aria-label="New chat" title="New chat">
-              <Icon d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6z" />
+            {avatarEl}
+            <div className="pc-title">
+              <strong id={id}>{title}</strong>
+              {(busy || subtitle) && <small>{busy ? 'Typing…' : subtitle}</small>}
+            </div>
+            <button
+              type="button"
+              className="pc-icon"
+              onClick={clear}
+              aria-label="New chat"
+              title="New chat"
+            >
+              <Icon d="M4 20v-3.6L15.6 4.8a2 2 0 0 1 2.8 0l.8.8a2 2 0 0 1 0 2.8L7.6 20zm2-2h.8L15 9.8l-.8-.8L6 17.2z" />
             </button>
             {floating && (
-              <button type="button" onClick={close} aria-label="Close">
-                <Icon d="M19 6.4 17.6 5 12 10.6 6.4 5 5 6.4 10.6 12 5 17.6 6.4 19 12 13.4 17.6 19 19 17.6 13.4 12z" />
+              <button type="button" className="pc-icon" onClick={close} aria-label="Close">
+                <Icon d="M18.3 7.1 16.9 5.7 12 10.6 7.1 5.7 5.7 7.1l4.9 4.9-4.9 4.9 1.4 1.4 4.9-4.9 4.9 4.9 1.4-1.4-4.9-4.9z" />
               </button>
             )}
           </header>
@@ -118,32 +141,47 @@ export function Chatbot(props: ChatbotProps): ReactNode {
               atBottom.current = el.scrollHeight - el.scrollTop - el.clientHeight < 40
             }}
           >
-            {welcomeMessage && !messages.length && (
-              <div className="pc-msg pc-assistant">{renderMarkdown(welcomeMessage)}</div>
+            {!messages.length && welcomeMessage && (
+              <div className="pc-row">
+                {avatarEl}
+                <div className="pc-msg pc-assistant">{renderMarkdown(welcomeMessage)}</div>
+              </div>
+            )}
+            {!messages.length && !!suggestions?.length && (
+              <div className="pc-suggestions">
+                {suggestions.map((s) => (
+                  <button key={s} type="button" onClick={() => submit(s)}>
+                    {s}
+                  </button>
+                ))}
+              </div>
             )}
             {messages.map((m) => (
-              <div key={m.id} className={`pc-msg pc-${m.role} pc-${m.status}`}>
-                {m.role === 'user' ? (
-                  m.content
-                ) : m.status === 'streaming' && !m.content ? (
-                  <span className="pc-typing" role="status" aria-label="Typing">
-                    <i />
-                    <i />
-                    <i />
-                  </span>
-                ) : (
-                  renderMarkdown(m.content)
-                )}
-                {NOTE[m.status] && (
-                  <div className="pc-note">
-                    {NOTE[m.status]}{' '}
-                    {m === last && (
-                      <button type="button" onClick={retry}>
-                        Retry
-                      </button>
-                    )}
-                  </div>
-                )}
+              <div key={m.id} className={`pc-row pc-row-${m.role}`}>
+                {m.role === 'assistant' && avatarEl}
+                <div className={`pc-msg pc-${m.role} pc-${m.status}`}>
+                  {m.role === 'user' ? (
+                    m.content
+                  ) : m.status === 'streaming' && !m.content ? (
+                    <span className="pc-typing" role="status" aria-label="Typing">
+                      <i />
+                      <i />
+                      <i />
+                    </span>
+                  ) : (
+                    renderMarkdown(m.content)
+                  )}
+                  {NOTE[m.status] && (
+                    <div className="pc-note">
+                      {NOTE[m.status]}
+                      {m === last && (
+                        <button type="button" onClick={retry}>
+                          Retry
+                        </button>
+                      )}
+                    </div>
+                  )}
+                </div>
               </div>
             ))}
           </div>
@@ -174,12 +212,12 @@ export function Chatbot(props: ChatbotProps): ReactNode {
               }}
             />
             {busy ? (
-              <button type="button" onClick={stop} aria-label="Stop">
-                <Icon d="M6 6h12v12H6z" />
+              <button type="button" className="pc-send" onClick={stop} aria-label="Stop">
+                <Icon d="M7 7h10v10H7z" size={16} />
               </button>
             ) : (
-              <button type="submit" aria-label="Send" disabled={!input.trim()}>
-                <Icon d="M3 20.5 21 12 3 3.5v6.6l12 1.9-12 1.9z" />
+              <button type="submit" className="pc-send" aria-label="Send" disabled={!input.trim()}>
+                <Icon d="M11 20V7.8l-5.6 5.6L4 12l8-8 8 8-1.4 1.4L13 7.8V20z" size={18} />
               </button>
             )}
           </form>
@@ -195,10 +233,11 @@ export function Chatbot(props: ChatbotProps): ReactNode {
           onClick={() => (open ? close() : setOpen(true))}
         >
           <Icon
+            size={26}
             d={
               open
                 ? 'M7.4 8.6 12 13.2l4.6-4.6L18 10l-6 6-6-6z'
-                : 'M6 4h12a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H8l-4 4V6a2 2 0 0 1 2-2z'
+                : 'M12 3c5 0 9 3.4 9 7.6s-4 7.6-9 7.6c-1 0-2-.1-2.9-.4L4.5 20l1.2-3.6C4 15 3 12.9 3 10.6 3 6.4 7 3 12 3z'
             }
           />
         </button>

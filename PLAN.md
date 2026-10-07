@@ -21,7 +21,7 @@ Hard goals: **zero runtime dependencies**, **client JS ≤ 12 KB gzip**, tree-sh
 | 3. Harden: e2e, a11y, perf, examples | done: 11 Playwright tests, axe clean, 500 msgs render ~57 ms, streaming 60 fps, Next.js/Vite/Express examples build from tarball |
 | 4. Launch | pending: npm package name/scope, publish 0.1.0, demo, posts |
 
-Measured client size (min + brotli): core 1.9 KB, react + core + markdown 5.1 KB, css 1.2 KB.
+Measured client size (min + brotli): core 1.9 KB, react + core + markdown 5.4 KB, css 2.1 KB = 7.5 KB total.
 
 Open items: real recorded provider fixtures (needs API key once), StackBlitz demo, README GIF.
 
@@ -44,8 +44,8 @@ Why one package with subpaths (not many packages): one install, one version, but
 |---|---|
 | core (store + stream + persist) | ≤ 3 KB |
 | markdown renderer | ≤ 3 KB |
-| react UI + hook | ≤ 5 KB |
-| styles.css | ≤ 2 KB |
+| react UI + hook | ≤ 4.5 KB |
+| styles.css | ≤ 2.5 KB (modern theme, rebalanced from react) |
 | **total client** | **≤ 12 KB** |
 | server | no hard budget, but zero deps (uses `fetch`, no provider SDKs) |
 
